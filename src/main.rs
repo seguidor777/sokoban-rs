@@ -25,7 +25,7 @@ extern crate xml;
 use clap::App;
 use sdl2::event::Event;
 use sdl2::image::LoadTexture;
-use sdl2::image::INIT_PNG;
+use sdl2::image::InitFlag;
 use sdl2::keyboard::Keycode;
 use sdl2::render::{Canvas, TextureCreator};
 use sdl2::video::{Window, WindowContext};
@@ -48,7 +48,7 @@ use game::{Direction, Level};
 use painter::Painter;
 use tileset::Tileset;
 
-pub fn main() -> Result<(), Box<Error>> {
+pub fn main() -> Result<(), Box<dyn Error>> {
     // Read command line arguments
     let yml = load_yaml!("clap.yml");
     let matches = App::from_yaml(yml).get_matches();
@@ -62,7 +62,7 @@ pub fn main() -> Result<(), Box<Error>> {
 
     // Initialize SDL components
     let sdl = sdl2::init()?;
-    let _ = sdl2::image::init(INIT_PNG)?;
+    let _ = sdl2::image::init(InitFlag::PNG)?;
     let ttf_context = sdl2::ttf::init()?;
 
     let window = create_window(&sdl, width, height, fullscreen)?;
@@ -149,7 +149,7 @@ fn create_window(
     width: u32,
     height: u32,
     fullscreen: bool,
-) -> Result<Window, Box<Error>> {
+) -> Result<Window, Box<dyn Error>> {
     let mut window_builder = sdl.video()?.window("sokoban-rs", width, height);
     if fullscreen {
         window_builder.fullscreen();
@@ -168,7 +168,7 @@ fn load_tileset<P: AsRef<Path>>(
     height: u32,
     effective_height: u32,
     offset: i32,
-) -> Result<Tileset, Box<Error>> {
+) -> Result<Tileset, Box<dyn Error>> {
     let texture = texture_creator.load_texture(path.as_ref())?;
     let tileset = Tileset::new(texture, width, height, effective_height, offset);
     Ok(tileset)
